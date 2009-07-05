@@ -1,0 +1,80 @@
+/*
+ * jCalendarView
+ * 
+ * Continuous improvement to convert an unordered list into a calendar view.
+ * 
+ * TODO License
+ */
+
+@CHARSET "UTF-8";
+
+.cvCalendarView {
+	width: 560px;
+	margin: auto;
+	border: solid 1px #000;
+}
+
+.cvCalendarView .cvMonthYear .cvInner {
+	padding: .5em;
+	border: solid 1px #aaa;
+	font-weight: bold;
+	text-align: center;
+	background-color: #ffc;
+}
+
+.cvCalendarView .cvDayNameLabel {
+	float: left;
+	width: 80px;
+}
+
+.cvCalendarView .cvDayNameLabel .cvInner {
+	border: solid 1px #aaa;
+	padding: .5em;
+	overflow: hidden;
+}
+
+.cvCalendarView .cvDay {
+	float: left;
+	width: 80px;
+	height: 80px;
+}
+
+.cvCalendarView .cvDay .cvInner {
+	border: solid 1px #aaa;
+	height: 78px;
+	overflow: hidden;
+}
+
+.cvCalendarView .cvDayOutOfMonth .cvInner {
+	background-color: #eee;
+}
+
+.cvCalendarView .cvDay .cvDayNumber {
+	font-weight: bold;
+	padding: .5em;
+	float: left;
+}
+
+.cvCalendarView .cvDay .cvEventTitle {
+	padding: 0 .5em;
+}
+
+.cvCalendarView .cvDay .cvEventTitle {
+	font-weight: bold;
+}
+
+.cvCalendarView .cvDay .cvEventTimes {
+	padding: 0 .5em;
+}
+
+.cvCalendarView .cvDay .cvEventTimes span {
+	font-size: .8em;
+}
+
+.cvCalendarView .cvDayOutOfMonth .cvDayNumber {
+	font-weight: normal;
+}
+
+.cvCalendarView .event {
+	background-color: #ffc;
+}

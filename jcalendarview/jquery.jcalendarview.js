@@ -54,6 +54,7 @@
 			'innerClass' : 'cvInner',
 			'dateFieldClass' : 'cvDate',
 			'eventTitleFieldClass' : 'cvEventTitle',
+			'textContainerClass' : 'cvTextContainer'
 		},
 		
 		/**
@@ -72,11 +73,14 @@
 					var titleElem = $(liElem).find('.'+options.titleFieldInputClass);
 					var title = $(titleElem).html();
 					var text = $(liElem).html();
+					var textContainer = $('<div class="' + options.textContainerClass + '"></div>').append(text).css('display', 'none');
+					$(document.body).append(textContainer);
 					date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
 					data[data.length] = {
 						'date' : date,
 						'title' : title,
-						'text' : text
+						'text' : text,
+						'textContainer' : textContainer
 					};
 				}
 				return data;
@@ -161,6 +165,22 @@
 						if (datum['date'].equals(date)) {
 							dayDiv.addClass('event');
 							dayDiv.append('<div class="' + options.eventTitleFieldClass + '"><span>' + datum['title'] + '</span></div>');
+							(function(dayDiv, textContainer) {
+								dayDiv.mouseenter(function(event) {
+									var offset = dayDiv.parent().offset();
+									textContainer.css({
+										'display' : 'block',
+										'position' : 'absolute',
+										'left' : offset['left'] + dayDiv.width(),
+										'top' : offset['top']
+									});
+								});
+								dayDiv.mouseleave(function(event) {
+									textContainer.css({
+										'display' : 'none'
+									});
+								});
+							})($(dayDiv), $(datum['textContainer']));
 						}
 					}
 				}

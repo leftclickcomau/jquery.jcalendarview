@@ -84,3 +84,13 @@
 .cvCalendarView .cvDayOutOfMonth .cvDayNumber {
 	font-weight: normal;
 }
+
+.cvTextContainer {
+	width : 210px;
+	height : 130px;
+	overflow: hidden;
+	background-color: #ffc;
+	border: solid 1px #000;
+	padding: 4px;
+	margin: 8px;
+}

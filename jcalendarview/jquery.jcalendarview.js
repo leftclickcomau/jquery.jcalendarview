@@ -8,39 +8,88 @@
 
 (function($) {
 	
+	/**
+	 * Convert a &lt;ul&gt; element into a calendar view.
+	 * 
+	 * TODO Document options
+	 */
 	$.fn.calendarView = function(options) {
 		var options = $.extend({}, $.calendarView.defaultOptions, options);
+		var calendar = null;
 		$(this).each(function() {
 			if (this.nodeName.toLowerCase() == 'ul') {
-				$.calendarView._init(this, options);
+				calendar = $.calendarView._init(this, options);
 			}
 		});
+		return calendar;
 	};
 	
+	/**
+	 * Utility functions for calendar view widget.
+	 */
 	$.calendarView = {
+		
+		/**
+		 * Calendar view default options.
+		 */
 		defaultOptions : {
+			'displayControls' : true,
+			'currentDate' : new Date(),
+			'minDate' : null,
+			'maxDate' : null,
+			
+			'dateFieldInputClass' : 'date',
+			'titleFieldInputClass' : 'title',
+		
 			'calendarViewClass' : 'cvCalendarView',
 			'monthYearClass' : 'cvMonthYear',
-			'dayNameContainerClass' : 'cvDayNameContainer',
+			'dayNameDivClass' : 'cvdayNameDiv',
 			'dayNameLabelClass' : 'cvDayNameLabel',
 			'dayClass' : 'cvDay',
 			'dayOutOfMonthClass' : 'cvDayOutOfMonth',
+			'pastDateClass' : 'cvPastDate',
+			'currentDateClass' : 'cvCurrentDate',
+			'futureDateClass' : 'cvFutureDate',
 			'dayNumberClass' : 'cvDayNumber',
 			'innerClass' : 'cvInner',
 			'dateFieldClass' : 'cvDate',
 			'eventTitleFieldClass' : 'cvEventTitle',
-			'eventTimesFieldClass' : 'cvEventTimes',
-			'dateFieldInputClass' : 'date',
-			'titleFieldInputClass' : 'title',
-			'timesFieldInputClass' : 'times',
-			'displayControls' : true,
-			'currentDate' : new Date(),
-			'minDate' : null,
-			'maxDate' : null
 		},
 		
+		/**
+		 * Initialise the given element as a calendar view.
+		 * 
+		 * @param elem &lt;ul&gt; element to convert into a calendar view
+		 * @param options See $.fn.calendarView(options)
+		 */
 		_init : function(elem, options) {
-			var appendNestedDiv = function(container, outerClass) {
+			function getData(liElems) {
+				data = [];
+				for (var i=0; i<liElems.length; i++) {
+					var liElem = liElems[i];
+					var dateElem = $(liElem).find('.'+options.dateFieldInputClass);
+					var date = Date.parse($(dateElem).text());
+					var titleElem = $(liElem).find('.'+options.titleFieldInputClass);
+					var title = $(titleElem).html();
+					var text = $(liElem).html();
+					date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
+					data[data.length] = {
+						'date' : date,
+						'title' : title,
+						'text' : text
+					};
+				}
+				return data;
+			};
+			
+			function swapContainer(elem) {
+				var container = $('<div class="' + options.calendarViewClass + '"></div>');
+				elem = $(elem);
+				elem.parent().append(container);
+				return container;
+			};
+			
+			function createNestedDiv(container, outerClass) {
 				var outer = $('<div class="' + outerClass + '"></div>');
 				var inner = $('<div class="' + options.innerClass + '"></div>');
 				container.append(outer);
@@ -48,67 +97,99 @@
 				return inner;
 			};
 			
-			var createDayDiv = function(container, date, outOfMonth) {
-				var cssClass = options.dayClass + (outOfMonth ? ' '+options.dayOutOfMonthClass : '');
-				var div = appendNestedDiv(container, cssClass);
+			function createMonthYearDiv(container, date) {
+				var div = createNestedDiv(container, options.monthYearClass);
+				div.append(date.toString('MMMM yyyy'));
+				return div;
+			};
+			
+			function createDayNameDiv(container) {
+				var div = $('<div class="' + options.dayNameDivClass + '"></div>');
+				container.append(div);
+				return div;
+			};
+			
+			function createDayDiv(container, date, isOutOfMonth, dateDiff) {
+				var cssClass = options.dayClass + ' ' + (
+					isOutOfMonth ? 
+						options.dayOutOfMonthClass : 
+						dateDiff == 0 ? 
+							options.currentDateClass : 
+							dateDiff < 0 ? 
+								options.pastDateClass : 
+								options.futureDateClass);
+				var div = createNestedDiv(container, cssClass);
 				div.append('<div class="'+ options.dayNumberClass + '">' + date.toString('dd') + '</div>');
 				return div;
 			};
 			
-			elem = $(elem);
-			var data = $('li', elem);
-			elem.css('display', 'none');
+			function fixDate(date) {
+				if (!date) {
+					date = new Date();
+				} else if (typeof date == 'string') {
+					date = parseDate(date);
+				} else if (typeof date == 'number') {
+					date = new Date(date);
+				}
+				date.moveToFirstDayOfMonth();
+				date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
+				return date;
+			};
 			
-			var container = $('<div class="' + options.calendarViewClass + '"></div>');
-			elem.parent().append(container);
+			function getCurrentDate() {
+				var date = new Date();
+				date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
+				return date;
+			};
 			
-			var date = options.currentDate;
-			if (!date) {
-				date = new Date();
-			} else if (typeof date == 'string') {
-				date = parseDate(date);
-			} else if (typeof date == 'number') {
-				date = new Date(date);
-			}
-			
-			var monthYearDiv = appendNestedDiv(container, options.monthYearClass);
-			monthYearDiv.append(date.toString('MMMM yyyy'));
-			
-			var dayNameContainer = $('<div class="' + options.dayNameContainerClass + '"></div>');
-			container.append(dayNameContainer);
-			var dayNameCount = 0;
-			
-			var month = date.getMonth();
-			date.moveToFirstDayOfMonth();
-			date.moveToDayOfWeek(0, -1);
-			date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
-
-			while (date.getMonth() <= month || date.getDay() > 0) {
+			function processDate(date, data) {
 				if (date.getDay() == 0) {
 					container.append('<div style="clear:both;"></div>');
 				}
 				if (dayNameCount++ < 7) {
-					appendNestedDiv(dayNameContainer, options.dayNameLabelClass).append(date.toString('dddd'));
+					createNestedDiv(dayNameDiv, options.dayNameLabelClass)
+						.append('<strong>'+date.toString('ddd')+'</strong>')
+						.parent().width(size);
 				}
-				var dayDiv = createDayDiv(container, date, date.getMonth() != month);
+				var dayDiv = createDayDiv(container, date, date.getMonth() != month, date.compareTo(now));
+				dayDiv.parent().width(size).height(size);
+				// TODO get the actual padding and border sizes, not just -10 here
+				dayDiv.width(size-10).height(size-10);
 				if (date.getMonth() == month) {
 					for (var i=0; i<data.length; i++) {
-						var liElem = data[i];
-						var dataDateElem = $(liElem).find('.'+options.dateFieldInputClass);
-						var dataDate = Date.parse($(dataDateElem).text());
-						dataDate.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
-						if (dataDate.equals(date)) {
+						datum = data[i];
+						if (datum['date'].equals(date)) {
 							dayDiv.addClass('event');
-							var titleElem = $(liElem).find('.'+options.titleFieldInputClass);
-							var timesElem = $(liElem).find('.'+options.timesFieldInputClass);
-							dayDiv.append('<div class="' + options.eventTitleFieldClass + '"><span>' + $(titleElem).html() + '</span></div>');
-							dayDiv.append('<div class="' + options.eventTimesFieldClass + '"><span>' + $(timesElem).html() + '</span></div>');
+							dayDiv.append('<div class="' + options.eventTitleFieldClass + '"><span>' + datum['title'] + '</span></div>');
 						}
 					}
 				}
+			};
+			
+			var x = true;
+			
+			var data = getData($('li', elem));
+			var container = swapContainer($(elem));
+			// TODO Get the actual padding and border here, instead of just -4
+			var size = (container.width() - 4) / 7;
+			var date = fixDate(options.currentDate);
+			var now = getCurrentDate();
+			var month = date.getMonth();
+			var monthYearDiv = createMonthYearDiv(container, date);
+			var dayNameDiv = createDayNameDiv(container);
+			var dayNameCount = 0;
+
+			date.moveToDayOfWeek(0, -1);
+			container.css('display', 'inline-block');
+			
+			while (date.getMonth() <= month || date.getDay() > 0) {
+				processDate(date, data);
 				date.addDays(1);
 			}
+			
 			container.append('<div style="clear:both;"></div>');
+			$(elem).css('display', 'none');
+			return container;
 		}
 	};
 	

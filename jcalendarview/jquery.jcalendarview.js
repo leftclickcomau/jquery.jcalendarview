@@ -39,7 +39,8 @@
 			'maxDate' : null,
 			
 			'dateFieldInputClass' : 'date',
-			'titleFieldInputClass' : 'title',
+			'previewTextInputClass' : 'previewText',
+			'fullTextInputClass' : 'fullText',
 		
 			'calendarViewClass' : 'cvCalendarView',
 			'monthYearClass' : 'cvMonthYear',
@@ -51,10 +52,13 @@
 			'currentDateClass' : 'cvCurrentDate',
 			'futureDateClass' : 'cvFutureDate',
 			'dayNumberClass' : 'cvDayNumber',
+			'currentDateLabelClass' : 'cvCurrentDateLabel',
 			'innerClass' : 'cvInner',
 			'dateFieldClass' : 'cvDate',
-			'eventTitleFieldClass' : 'cvEventTitle',
-			'textContainerClass' : 'cvTextContainer'
+			'previewTextContainerClass' : 'cvPreviewText',
+			'fullTextContainerClass' : 'cvFullText',
+			
+			'currentDateLabelText' : 'today'
 		},
 		
 		/**
@@ -70,17 +74,13 @@
 					var liElem = liElems[i];
 					var dateElem = $(liElem).find('.'+options.dateFieldInputClass);
 					var date = Date.parse($(dateElem).text());
-					var titleElem = $(liElem).find('.'+options.titleFieldInputClass);
-					var title = $(titleElem).html();
-					var text = $(liElem).html();
-					var textContainer = $('<div class="' + options.textContainerClass + '"></div>').append(text).css('display', 'none');
-					$(document.body).append(textContainer);
+					var previewTextElem = $(liElem).find('.'+options.previewTextInputClass);
+					var fullTextElem = $(liElem).find('.'+options.fullTextInputClass);
 					date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
 					data[data.length] = {
 						'date' : date,
-						'title' : title,
-						'text' : text,
-						'textContainer' : textContainer
+						'previewText' : previewTextElem.html(),
+						'fullText' : fullTextElem.html()
 					};
 				}
 				return data;
@@ -124,6 +124,9 @@
 								options.futureDateClass);
 				var div = createNestedDiv(container, cssClass);
 				div.append('<div class="'+ options.dayNumberClass + '">' + date.toString('dd') + '</div>');
+				if (dateDiff == 0) {
+					div.append('<div class="' + options.currentDateLabelClass + '">' + options.currentDateLabelText + '</div>');
+				}
 				return div;
 			};
 			
@@ -164,23 +167,26 @@
 						datum = data[i];
 						if (datum['date'].equals(date)) {
 							dayDiv.addClass('event');
-							dayDiv.append('<div class="' + options.eventTitleFieldClass + '"><span>' + datum['title'] + '</span></div>');
-							(function(dayDiv, textContainer) {
-								dayDiv.mouseenter(function(event) {
+							(function(dayDiv, previewText, fullText) {
+								var previewTextContainer = $('<div class="' + options.previewTextContainerClass + '"><span>' + previewText + '</span></div>');
+								dayDiv.append(previewTextContainer);
+								var fullTextContainer = $('<div class="' + options.fullTextContainerClass + '"><span>' + fullText + '</span></div>');
+								fullTextContainer.css('display', 'none');
+								$(container).append(fullTextContainer);
+								previewTextContainer.css('cursor', 'pointer');
+								previewTextContainer.mouseenter(function(event) {
 									var offset = dayDiv.parent().offset();
-									textContainer.css({
-										'display' : 'block',
+									fullTextContainer.css({
 										'position' : 'absolute',
 										'left' : offset['left'] + dayDiv.width(),
 										'top' : offset['top']
 									});
+									fullTextContainer.fadeIn();
 								});
-								dayDiv.mouseleave(function(event) {
-									textContainer.css({
-										'display' : 'none'
-									});
+								previewTextContainer.mouseleave(function(event) {
+									fullTextContainer.fadeOut();
 								});
-							})($(dayDiv), $(datum['textContainer']));
+							})($(dayDiv), datum['previewText'], datum['fullText']);
 						}
 					}
 				}

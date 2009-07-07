@@ -1,0 +1,98 @@
+@CHARSET "UTF-8";
+
+.cvCalendarView .cvMonthYear .cvInner {
+	padding: 4px;
+	border: solid 1px #aaa;
+	text-align: center;
+	font-family: sans-serif;
+	font-weight: bold;
+	background-color: #fcf;
+}
+
+.cvCalendarView .cvDayNameLabel .cvInner {
+	font-family: sans-serif;
+	text-align: center;
+	border: solid 1px #aaa;
+	padding: 4px;
+}
+
+.cvCalendarView .cvDay .cvInner {
+	border: solid 1px #aaa;
+	padding: 4px;
+}
+
+.cvCalendarView .cvDayOutOfMonth .cvInner {
+	background-color: #ccc;
+	color: #888;
+}
+
+.cvCalendarView .cvPastDate .cvInner {
+	background-color: #eee;
+}
+
+.cvCalendarView .cvCurrentDate .cvInner {
+	background-color: #ffc;
+}
+
+.cvCalendarView .event {
+	background-color: #fcf;
+}
+
+.cvCalendarView .cvDay .cvDayNumber {
+	font-family: sans-serif;
+	font-size: 1.4em;
+	padding: 0 4px 4px 0;
+}
+
+.cvCalendarView .cvDay .cvCurrentDateLabel {
+	color: #888;
+	text-transform: uppercase;
+	font-size: .8em;
+	padding: 0 0 4px 4px;
+}
+
+.cvCalendarView .event .cvDayNumber {
+	font-weight: bold;
+}
+
+.cvCalendarView .cvDayOutOfMonth .cvDayNumber {
+	font-weight: normal;
+}
+
+.cvCalendarView .cvPreviewText {
+	font-weight: bold;
+	clear: both;
+}
+
+.cvCalendarView .cvPreviewText a {
+	color: #000;
+	text-decoration: none;
+}
+
+.cvCalendarView .cvPreviewText a:hover {
+	color: #000;
+	background-color: #ffc;
+}
+
+.cvCalendarView .cvPreviewText a:active {
+	color: #f00;
+	border-bottom: solid 1px #888;
+}
+
+.cvCalendarView .cvPreviewText img.icon {
+	float: left;
+	padding: 0 4px 4px 0;
+}
+
+.cvCalendarView .cvFullText {
+	width : 210px;
+	background-color: #ffc;
+	padding: 4px;
+	margin: 8px;
+}
+
+.cvCalendarView .cvFullText img.icon {
+	float: left;
+	padding: 0 4px 12px 0;
+}
+

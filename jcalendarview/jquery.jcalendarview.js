@@ -75,8 +75,8 @@
 		'fullTextContainerClass' : 'cvFullText',
 		
 		'currentDateLabelText' : 'today',
-		'previousMonthLinkText' : 'previous',
-		'nextMonthLinkText' : 'next'
+		'previousMonthLinkText' : '&lArr; previous',
+		'nextMonthLinkText' : 'next &rArr;'
 	};
 	
 	/**

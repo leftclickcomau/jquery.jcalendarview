@@ -20,11 +20,13 @@
 
 .cvCalendarView .cvMonthYear .cvPreviousMonth {
 	float: left;
+	text-align: left;
 	width: 20%;
 }
 
 .cvCalendarView .cvMonthYear .cvNextMonth {
 	float: right;
+	text-align: right;
 	width: 20%;
 }
 

@@ -1,0 +1,17 @@
+jcalendarview
+
+jquery plugin to convert a plain list containing dated items into a dynamic
+calendar view
+
+(c) 2009 Leftclick.com.au
+
+
+changelog
+
+
+version 0.0.1
+2009/07/14
+Initial (numbered) version.  
+Relatively functionally complete.
+Displays calendar with item previews and popup details.
+Allows basic month navigation.

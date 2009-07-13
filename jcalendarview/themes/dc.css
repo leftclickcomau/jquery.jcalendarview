@@ -1,5 +1,3 @@
-@CHARSET "UTF-8";
-
 .cvCalendarView .cvMonthYear .cvInner {
 	padding: 4px;
 	border: solid 1px #aaa;
@@ -51,6 +49,10 @@
 	padding: 0 0 4px 4px;
 }
 
+.cvCalendarView .cvDay h3 {
+	font-size: 1em;
+}
+
 .cvCalendarView .event .cvDayNumber {
 	font-weight: bold;
 }
@@ -85,7 +87,7 @@
 }
 
 .cvCalendarView .cvFullText {
-	width : 210px;
+	width : 240px;
 	background-color: #ffc;
 	padding: 4px;
 	margin: 8px;

@@ -18,6 +18,20 @@
 	text-align: center;
 }
 
+.cvCalendarView .cvMonthYear .cvPreviousMonth {
+	float: left;
+	width: 20%;
+}
+
+.cvCalendarView .cvMonthYear .cvNextMonth {
+	float: right;
+	width: 20%;
+}
+
+.cvCalendarView .cvDayNameDiv {
+	clear: both;
+}
+
 .cvCalendarView .cvDayNameLabel {
 	float: left;
 }

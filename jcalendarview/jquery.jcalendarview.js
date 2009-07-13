@@ -35,6 +35,8 @@
 		this.elem = $(elem);
 		this.container = $('<div class="' + this.options.calendarViewClass + '"></div>');
 		this.elem.parent().append(this.container);
+		this.data = this.getData($('li', this.elem));
+		this.size = Math.floor(this.container.innerWidth() / 7.0);
 		this.render();
 		this.container.append('<div style="clear:both;"></div>');
 		this.container.css('display', 'inline-block');
@@ -142,15 +144,14 @@
 			var div = this.createNestedDiv(this.container, this.options.monthYearClass);
 			var previousMonthLink = $('<a href="#" class="' + this.options.previousMonthLinkClass + '">' + this.options.previousMonthLinkText + '</a>');
 			var nextMonthLink = $('<a href="#" class="' + this.options.nextMonthLinkClass + '">' + this.options.nextMonthLinkText + '</a>');
-			previousMonthLink.jcalendarview = this;
-			nextMonthLink.jcalendarview = this;
+			var _jcalendarview = this;
 			previousMonthLink.click(function(event) {
-				this.jcalendarview.date.addMonth(-1);
-				this.jcalendarview.render();
+				_jcalendarview.move(-1);
+				return false;
 			});
 			nextMonthLink.click(function(event) {
-				this.jcalendarview.date.addMonth(1);
-				this.jcalendarview.render();
+				_jcalendarview.move(+1);
+				return false;
 			});
 			div.append(previousMonthLink);
 			div.append(nextMonthLink);
@@ -161,18 +162,16 @@
 		/**
 		 * Create a div containing the names of the days.
 		 * 
-		 * @param size Size of each day name div.
-		 * 
 		 * @return Created div.
 		 */
-		createDayNameDiv : function(size) {
+		createDayNameDiv : function() {
 			var div = $('<div class="' + this.options.dayNameDivClass + '"></div>');
 			var date = new Date();
 			date.moveToDayOfWeek(0, -1);
 			for (var i=0; i<7; i++) {
 				this.createNestedDiv(div, this.options.dayNameLabelClass)
 					.append('<strong>'+date.toString('ddd')+'</strong>')
-					.parent().width(size);
+					.parent().width(this.size);
 				date.addDays(1);
 			}
 			this.container.append(div);
@@ -227,23 +226,30 @@
 		},
 		
 		/**
+		 * Move the given number of months, and re-draw the view.
+		 */
+		move : function(delta) {
+			this.date = this.date.addMonths(delta);
+			this.container.html('');
+			this.render();
+		},
+		
+		/**
 		 * Draw the calendar view at the current date.
 		 */
 		render : function() {
 			// Initialise
 			var date = new Date(this.date.getTime());
 			date.moveToFirstDayOfMonth();
-			
-			var data = this.getData($('li', this.elem));
-			var size = Math.floor(this.container.innerWidth() / 7.0);
 			var month = date.getMonth();
+			
 			var monthYearDiv = this.createMonthYearDiv(date);
-			var dayNameDiv = this.createDayNameDiv(size);
+			var dayNameDiv = this.createDayNameDiv(this.size);
 			
 			// Process each date in order
 			date.moveToDayOfWeek(0, -1);
 			while (date.getMonth() <= month || date.getDay() > 0) {
-				this.renderDate(date, month, data, size);
+				this.renderDate(date, month);
 				date.addDays(1);
 			}
 		},
@@ -253,25 +259,21 @@
 		 * 
 		 * @param date Date to draw.
 		 * @param month Month being drawn.
-		 * @param data Data for the calendar.
-		 * @param size Size of the boxes in px.
 		 */
-		renderDate : function(date, month, data, size) {
+		renderDate : function(date, month) {
 			var now = this.fixDate(new Date());
 			if (date.getDay() == 0) {
 				this.container.append('<div style="clear:both;"></div>');
 			}
 			var dayDiv = this.createDayDiv(date, date.getMonth() != month, date.compareTo(now));
-			dayDiv.parent().width(size).height(size);
+			dayDiv.parent().width(this.size).height(this.size);
 			// TODO get the actual padding and border sizes, not just -10 here
-			dayDiv.width(size-10).height(size-10);
-			if (date.getMonth() == month) {
-				for (var i=0; i<data.length; i++) {
-					datum = data[i];
-					if (datum['date'].equals(date)) {
-						dayDiv.addClass('event');
-						this.processDayData($(dayDiv), datum['previewText'], datum['fullText']);
-					}
+			dayDiv.width(this.size-10).height(this.size-10);
+			for (var i=0; i<this.data.length; i++) {
+				datum = this.data[i];
+				if (datum['date'].equals(date)) {
+					dayDiv.addClass('event');
+					this.processDayData($(dayDiv), datum['previewText'], datum['fullText']);
 				}
 			}
 		},

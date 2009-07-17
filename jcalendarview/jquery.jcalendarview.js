@@ -91,25 +91,27 @@
 		 * 
 		 * @return Key-value map of data from the list.
 		 */
-		getData : function(liElems) {
-			data = [];
-			for (var i=0; i<liElems.length; i++) {
-				var liElem = liElems[i];
-				if (liElem.nodeName.toLowerCase() == 'li') {
-					liElem = $(liElem);
-					var dateElem = liElem.find('.'+this.options.dateFieldInputClass);
-					var date = Date.parse($(dateElem).text());
-					var previewTextElem = liElem.find('.'+this.options.previewTextInputClass);
-					var fullTextElem = liElem.find('.'+this.options.fullTextInputClass);
-					date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
-					data[data.length] = {
-						'date' : date,
-						'previewText' : previewTextElem.html(),
-						'fullText' : fullTextElem.html()
-					};
-				}
-			}
-			return data;
+        getData : function(liElems) {
+	        data = [];
+	        for (var i=0; i<liElems.length; i++) {
+                var liElem = liElems[i];
+                if (liElem.nodeName.toLowerCase() == 'li') {
+                    liElem = $(liElem);
+                    var dateElem = liElem.find('.'+this.options.dateFieldInputClass);
+                    if (dateElem && dateElem.length > 0) {
+                        var date = Date.parse($(dateElem).text());
+                        var previewTextElem = liElem.find('.'+this.options.previewTextInputClass);
+                        var fullTextElem = liElem.find('.'+this.options.fullTextInputClass);
+                        date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
+                        data[data.length] = {
+                            'date' : date,
+                            'previewText' : previewTextElem.html(),
+                            'fullText' : fullTextElem.html()
+                        };
+                    }
+	            }
+	        }
+	        return data;
 		},
 		
 		/**

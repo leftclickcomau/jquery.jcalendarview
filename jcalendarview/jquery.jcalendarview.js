@@ -3,7 +3,10 @@
  * 
  * Continuous improvement to convert an unordered list into a calendar view.
  * 
- * TODO License
+ * Copyright (c) 2009 Leftclick.com.au, Ben New
+ * 
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
  */
 
 ;(function($) {

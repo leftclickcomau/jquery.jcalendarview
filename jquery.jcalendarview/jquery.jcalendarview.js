@@ -1,7 +1,8 @@
 /*
  * jcalendarview
- * 
  * Continuous improvement to convert an unordered list into a calendar view.
+ * 
+ * Leftclick.com.au jQuery plugin library
  * 
  * Copyright (c) 2009 Leftclick.com.au, Ben New
  * 
@@ -247,13 +248,14 @@
 			var date = new Date(this.date.getTime());
 			date.moveToFirstDayOfMonth();
 			var month = date.getMonth();
+			var year = date.getYear();
 			
 			var monthYearDiv = this.createMonthYearDiv(date);
 			var dayNameDiv = this.createDayNameDiv(this.size);
 			
 			// Process each date in order
 			date.moveToDayOfWeek(0, -1);
-			while (date.getMonth() <= month || date.getDay() > 0) {
+			while (((date.getMonth() <= month) && (date.getYear() <= year)) || ((month == 0) && (date.getYear() < year)) || (date.getDay() > 0)) {
 				this.renderDate(date, month);
 				date.addDays(1);
 			}
@@ -292,12 +294,12 @@
 		 */
 		processDayData : function(dayDiv, previewText, fullText) {
 			var previewTextContainer = $('<div class="' + this.options.previewTextContainerClass + '"><span>' + previewText + '</span></div>');
-			dayDiv.append(previewTextContainer);
 			var fullTextContainer = $('<div class="' + this.options.fullTextContainerClass + '"><span>' + fullText + '</span></div>');
-			fullTextContainer.css('display', 'none');
-			this.container.append(fullTextContainer);
-			previewTextContainer.css('cursor', 'pointer');
-			previewTextContainer.mouseenter(function(event) {
+			this.container.append(fullTextContainer.css({
+				'position' : 'absolute',
+				'display' : 'none'
+			}));
+			dayDiv.append(previewTextContainer.mouseenter(function(event) {
 				var offset = dayDiv.parent().offset();
 				var left = offset['left'] + dayDiv.parent().width();
 				if (left + fullTextContainer.outerWidth() > $(document.body).width()) {
@@ -306,13 +308,12 @@
 				fullTextContainer.css({
 					'position' : 'absolute',
 					'left' : left,
-					'top' : offset['top']
-				});
-				fullTextContainer.fadeIn();
-			});
-			previewTextContainer.mouseleave(function(event) {
-				fullTextContainer.fadeOut();
-			});
+					'top' : offset['top'],
+					'display' : 'none'
+				}).stop(null, true).fadeIn();
+			}).mouseleave(function(event) {
+				fullTextContainer.stop(null, true).fadeOut();
+			}).css('cursor', 'pointer'));
 		}
 	});
 })(jQuery);

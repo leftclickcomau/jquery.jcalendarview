@@ -103,7 +103,8 @@
                     liElem = $(liElem);
                     var dateElem = liElem.find('.'+this.options.dateFieldInputClass);
                     if (dateElem && dateElem.length > 0) {
-                        var date = Date.parse($(dateElem).text());
+                    	var dateText = $.trim($(dateElem).text());
+                        var date = Date.parse(dateText);
                         var previewTextElem = liElem.find('.'+this.options.previewTextInputClass);
                         var fullTextElem = liElem.find('.'+this.options.fullTextInputClass);
                         date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });

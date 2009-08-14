@@ -96,28 +96,30 @@
 		 * @return Key-value map of data from the list.
 		 */
         getData : function(liElems) {
-	        data = [];
-	        for (var i=0; i<liElems.length; i++) {
+                data = [];
+                for (var i=0; i<liElems.length; i++) {
                 var liElem = liElems[i];
                 if (liElem.nodeName.toLowerCase() == 'li') {
                     liElem = $(liElem);
                     var dateElem = liElem.find('.'+this.options.dateFieldInputClass);
                     if (dateElem && dateElem.length > 0) {
-                    	var dateText = $.trim($(dateElem).text());
+                        var dateText = $.trim($(dateElem).text());
                         var date = Date.parse(dateText);
-                        var previewTextElem = liElem.find('.'+this.options.previewTextInputClass);
-                        var fullTextElem = liElem.find('.'+this.options.fullTextInputClass);
-                        date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
-                        data[data.length] = {
-                            'date' : date,
-                            'previewText' : previewTextElem.html(),
-                            'fullText' : fullTextElem.html()
-                        };
+                        if (date && $.isFunction(date.set)) {
+                            var previewTextElem = liElem.find('.'+this.options.previewTextInputClass);
+                            var fullTextElem = liElem.find('.'+this.options.fullTextInputClass);
+                            date.set({ 'hour' : 0, 'minute' : 0, 'second' : 0, 'millisecond' : 0 });
+                            data[data.length] = {
+                                'date' : date,
+                                'previewText' : previewTextElem.html(),
+                                'fullText' : fullTextElem.html()
+                            };
+                        }
                     }
-	            }
-	        }
-	        return data;
-		},
+                    }
+                }
+                return data;
+                },
 		
 		/**
 		 * Helper method.
